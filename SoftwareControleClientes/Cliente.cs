@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace SoftwareControleClientes
@@ -24,9 +23,9 @@ namespace SoftwareControleClientes
                 this.idade = idade;
             }
         }
-        public int getIdade() 
+        public int getIdade()
         {
-            return idade; 
+            return idade;
         }
         public int Codigo { get => codigo; set => codigo = value; }
         public string Nome { get => nome; set => nome = value; }
@@ -44,11 +43,11 @@ namespace SoftwareControleClientes
             Console.Clear();
 
             Console.WriteLine("    Digite uma senha bem segura: ");
-            
+
             while (true)
             {
                 var key = Console.ReadKey(true);
-                
+
                 if (key.Key == ConsoleKey.Enter)
                     break;
 
@@ -57,8 +56,9 @@ namespace SoftwareControleClientes
                     senha.Remove(senha.Length - 1, 1);
                 }
 
-                else if(key.Key != ConsoleKey.Backspace) senha.Append(key.KeyChar);
+                else if (key.Key != ConsoleKey.Backspace) senha.Append(key.KeyChar);
             }
+
             Console.Clear();
 
             codigo = cod;
