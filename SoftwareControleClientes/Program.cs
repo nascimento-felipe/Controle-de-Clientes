@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace SoftwareControleClientes
 {
@@ -7,15 +8,18 @@ namespace SoftwareControleClientes
         static void Main(string[] args)
         {
             int hour = DateTime.Now.Hour;
-            string[] clientes = new string[10];
+            List<Cliente> clientes = new List<Cliente>();
             int i = 0;
             int opcao;
 
             // Controle da mensagem de boas vindas.
-            SendWelcomeMessage(hour);
 
             do
             {
+                Console.Clear();
+
+                SendWelcomeMessage(hour);
+
                 Console.WriteLine("  Escolha uma opção:\n"
                     + "    1. Cadastrar novo cliente\n"
                     + "    2. Ver todos os clientes\n"
@@ -34,11 +38,29 @@ namespace SoftwareControleClientes
                             Cliente novoCliente = new Cliente();
                             novoCliente.CadastrarCliente(i);
 
-                            clientes.SetValue($"{novoCliente.Nome}, {novoCliente.Senha}, {novoCliente.getIdade()}", i);
+                            clientes.Add(novoCliente);
 
-                            Console.WriteLine($"Cadastro concluído. Bem vindo(a), {novoCliente.Nome}!\n\n\n(senha: {novoCliente.Senha})");
+                            Console.WriteLine($"Cadastro de {clientes[i].Nome} concluído!");
+                            i++;
+
+                            WaitEnterBePressed();
+
                             break;
                         case 2:
+
+                            Console.WriteLine($"Listando todos os clientes no sistema: (quantidade total = {clientes.Count})");
+
+                            foreach (Cliente c in clientes)
+                            {
+                                Console.WriteLine("-----------------------------");
+                                Console.WriteLine($"\nID: {c.Codigo}" +
+                                    $"\nNome: {c.Nome}" +
+                                    $"\nIdade: {c.getIdade()}");
+                                Console.WriteLine("-----------------------------");
+                            }
+
+                            WaitEnterBePressed();
+
                             break;
                         case 3:
                             break;
@@ -51,7 +73,7 @@ namespace SoftwareControleClientes
             } while (opcao != -1);
         }
 
-        static void SendWelcomeMessage(int hour)
+        private static void SendWelcomeMessage(int hour)
         {
             if (hour >= 4 && hour <= 12)
             {
@@ -64,6 +86,19 @@ namespace SoftwareControleClientes
             else
             {
                 Console.WriteLine("  Boa Noite!");
+            }
+        }
+
+        private static void WaitEnterBePressed()
+        {
+            Console.WriteLine("\nAperte enter para continuar...");
+
+            while (true)
+            {
+                var key = Console.ReadKey(true);
+
+                if (key.Key == ConsoleKey.Enter)
+                    break;
             }
         }
 
