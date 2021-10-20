@@ -1,37 +1,29 @@
 ﻿using System;
 using System.Text;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace SoftwareControleClientes
 {
-    class Cliente
+    [BsonIgnoreExtraElements]
+    public sealed class Cliente
     {
+        private ObjectId codigo;
         private String nome;
         private int idade;
-        private int codigo;
         private StringBuilder senha = new StringBuilder();
 
+        public Cliente()
+        {
+            this.codigo = ObjectId.GenerateNewId();
+        }
 
-        public void setIdade(int idade)
-        {
-            if (idade <= 0)
-            {
-                this.idade = 0;
-                Console.WriteLine("Digite uma idade válida.");
-            }
-            else
-            {
-                this.idade = idade;
-            }
-        }
-        public int getIdade()
-        {
-            return idade;
-        }
-        public int Codigo { get => codigo; set => codigo = value; }
+        public ObjectId Codigo { get => codigo; set => codigo = value; }
+        public int Idade { get => idade; set => idade = value; }
         public string Nome { get => nome; set => nome = value; }
         public StringBuilder Senha { get => senha; set => senha = value; }
 
-        public void CadastrarCliente(int cod)
+        public void CadastrarCliente()
         {
             Console.WriteLine("  Seja bem vindo!\n"
                 + "    Digite o seu nome: ");
@@ -39,7 +31,7 @@ namespace SoftwareControleClientes
             Console.Clear();
 
             Console.WriteLine("    Digite sua idade:");
-            setIdade(int.Parse(Console.ReadLine()));
+            Idade = (int.Parse(Console.ReadLine()));
             Console.Clear();
 
             Console.WriteLine("    Digite uma senha bem segura: ");
@@ -60,8 +52,15 @@ namespace SoftwareControleClientes
             }
 
             Console.Clear();
+        }
 
-            codigo = cod;
+        public void AlterarCliente()
+        {
+            Console.Write("Digite o novo nome: ");
+            nome = Console.ReadLine();
+
+            Console.Write("Digite a nova idade: ");
+            Idade = Int32.Parse(Console.ReadLine());
         }
     }
 }
