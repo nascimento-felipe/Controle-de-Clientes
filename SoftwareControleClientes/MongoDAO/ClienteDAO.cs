@@ -48,9 +48,31 @@ namespace SoftwareControleClientes.MongoDAO
             return clientes;
         }
 
-        public void UpdateClienteDAO(IMongoCollection<Cliente> clienteCollection, Cliente infoCliente, int value, string id)
+        public List<Cliente> ListClientesByDataDAO(IMongoCollection<Cliente> clienteCollection, string data)
         {
-            var filter = Builders<Cliente>.Filter.Eq(b => b.Codigo, ObjectId.Parse(id));
+            var filter = Builders<Cliente>.Filter.Where(b => b.Data == data);
+            var clientes = clienteCollection.Find<Cliente>(filter).SortBy(b => b.Codigo).ToList();
+
+            return clientes;
+        }
+
+        public Cliente GetClienteByCodigoDAO(IMongoCollection<Cliente> clienteCollection, int id, string data)
+        {
+            Cliente cliente = new Cliente();
+            var clientes = clienteCollection.Find(x => x.Codigo == id && x.Data == data).ToList();
+
+            foreach (Cliente c in clientes)
+            {
+                cliente = c;
+            }
+
+            return cliente;
+        }
+
+        public void UpdateClienteDAO(IMongoCollection<Cliente> clienteCollection, Cliente infoCliente, string data, int id)
+        {
+            // b => b.Data == data
+            var filter = Builders<Cliente>.Filter.Where(b => b.Codigo == id && b.Data == data);
             var clienteUpdate = Builders<Cliente>.Update
                 .Set(b => b.Nome, infoCliente.Nome)
                 .Set(b => b.Senha, infoCliente.Senha)
@@ -61,7 +83,7 @@ namespace SoftwareControleClientes.MongoDAO
 
         public void DeleteClienteDAO(IMongoCollection<Cliente> clienteCollection, string id)
         {
-            var filter = Builders<Cliente>.Filter.Where(b => b.Codigo == ObjectId.Parse(id));
+            var filter = Builders<Cliente>.Filter.Where(b => b.Codigo == Int32.Parse(id));
 
             clienteCollection.DeleteOne(filter);
         }

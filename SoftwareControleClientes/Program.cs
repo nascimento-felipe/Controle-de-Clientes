@@ -22,7 +22,6 @@ namespace SoftwareControleClientes
                 Console.WriteLine("  Boa Noite!");
             }
         }
-
         private static void WaitEnterBePressed()
         {
             Console.WriteLine("\nAperte enter para continuar...");
@@ -35,17 +34,47 @@ namespace SoftwareControleClientes
                     break;
             }
         }
-
         private static void WriteUserOnScreen(Cliente c)
         {
             Console.WriteLine("-----------------------------");
-            Console.WriteLine($"ID: {c.Codigo}" +
-                              $"\nNome: {c.Nome}" +
-                              $"\nIdade: {c.Idade}");
+            Console.WriteLine($"ID: {c.Codigo}\n" +
+                              $"Nome: {c.Nome}\n" +
+                              $"Idade: {c.Idade}\n" +
+                              $"Data: {c.Data}");
             Console.WriteLine("-----------------------------");
         }
+        private static void AlterarUsuario()
+        {
+            Cliente cliente = new Cliente();
 
-        private static StringBuilder GetInvisibleInput()
+            Console.Write(" Digite a data do cliente: ");
+            string data = Console.ReadLine();
+
+            if (data == null || data == "")
+                data = $"{DateTime.Now.Day}/{DateTime.Now.Month}/{DateTime.Now.Year}";
+
+            Console.Write(" Digite o código do cliente: ");
+            int id = Int32.Parse(Console.ReadLine());
+
+            var collection = ClienteDAO.GetInstance.GetClientesCollectionDAO();
+            Console.Clear();
+
+            Console.Write(" Digite o novo nome: ");
+            cliente.Nome = Console.ReadLine();
+
+            Console.Write(" Digite a nova idade: ");
+            cliente.Idade = Int32.Parse(Console.ReadLine());
+
+            Console.Write(" Digite a nova senha: ");
+            cliente.Senha = GetInvisibleInputString();
+
+            ClienteDAO.GetInstance.UpdateClienteDAO(collection, cliente, data, id);
+
+            Console.Clear();
+            Console.WriteLine(" Cliente atualizado!");
+            WaitEnterBePressed();
+        }
+        private static StringBuilder GetInvisibleInputString()
         {
             StringBuilder senha = new StringBuilder();
 
@@ -70,29 +99,26 @@ namespace SoftwareControleClientes
         static void Main(string[] args)
         {
             // criar método de criação de menus
-            int hour = DateTime.Now.Hour;
-            List<Cliente> clientes = new List<Cliente>();
             int i = 0;
             int opcao;
 
-            try
+            do
             {
-                do
+                Console.Clear();
+                SendWelcomeMessage(DateTime.Now.Hour);
+
+                // menu 1
+                Console.Write("  Menu Principal\n"
+                            + "    Escolha uma opção:\n"
+                            + "      1. Cadastrar novo cliente\n"
+                            + "      2. Listar clientes\n"
+                            + "      3. Alterar Cliente\n"
+                            + "      4. Deletar Cliente\n"
+                            + "     -1. Sair.\n\n" 
+                            + "    Opção escolhida: ");
+                opcao = int.Parse(Console.ReadLine());
+                try
                 {
-                    Console.Clear();
-
-                    SendWelcomeMessage(hour);
-
-                    // menu 1
-                    Console.WriteLine("  Menu Principal\n"
-                                    + "    Escolha uma opção:\n"
-                                    + "      1. Cadastrar novo cliente\n"
-                                    + "      2. Listar clientes\n"
-                                    + "      3. Alterar Cliente\n"
-                                    + "      4. Deletar Cliente\n"
-                                    + "     -1. Sair.");
-
-                    opcao = int.Parse(Console.ReadLine());
 
                     if (opcao != -1)
                     {
@@ -103,14 +129,15 @@ namespace SoftwareControleClientes
                             // Cadastrar cliente
                             case 1:
                                 Cliente novoCliente = new Cliente();
-                                novoCliente.CadastrarCliente();
+                                novoCliente.CadastrarCliente(i);
+
+                                Console.WriteLine("Cadastrando cliente...");
 
                                 var clientesCollection = ClienteDAO.GetInstance.GetClientesCollectionDAO();
                                 ClienteDAO.GetInstance.InsertClienteDAO(clientesCollection, novoCliente);
 
-                                clientes.Add(novoCliente);
 
-                                Console.WriteLine($"Cadastro de {clientes[i].Nome} concluído!");
+                                Console.WriteLine($"Cadastro de {novoCliente.Nome} concluído!");
                                 i++;
 
                                 WaitEnterBePressed();
@@ -119,19 +146,55 @@ namespace SoftwareControleClientes
                             // Listar cliente(s)
                             case 2:
 
-                                var collection = ClienteDAO.GetInstance.GetClientesCollectionDAO();
-                                clientes = ClienteDAO.GetInstance.ListClientesDAO(collection);
+                                Console.Write(" Menu de Listagem\n" +
+                                              "  1. Listar todos os clientes\n" +
+                                              "  2. Listar clientes por data\n\n" +
+                                              " Opção escolhida: ");
+                                int escolha = Int32.Parse(Console.ReadLine());
 
-                                foreach (Cliente c in clientes)
+                                switch (escolha)
                                 {
-                                    Console.WriteLine(c.Nome);
+                                    case 1:
+                                        List<Cliente> clientes = new List<Cliente>();
+                                        var collection = ClienteDAO.GetInstance.GetClientesCollectionDAO();
+                                        clientes = ClienteDAO.GetInstance.ListClientesDAO(collection);
+
+                                        foreach (Cliente c in clientes)
+                                        {
+                                            WriteUserOnScreen(c);
+                                        }
+
+                                        WaitEnterBePressed();
+                                        break;
+                                    case 2:
+                                        Console.Write(" Digite a data para procurar(DD/MM/AAAA): ");
+                                        string data = Console.ReadLine();
+
+                                        if (data == null || data == "")
+                                            data = $"{DateTime.Now.Day}/{DateTime.Now.Month}/{DateTime.Now.Year}";
+
+                                        var colecao = ClienteDAO.GetInstance.GetClientesCollectionDAO();
+
+                                        clientes = ClienteDAO.GetInstance.ListClientesByDataDAO(colecao, data);
+                                        
+                                        Console.Clear();
+
+                                        foreach (Cliente c in clientes)
+                                        {
+                                            WriteUserOnScreen(c);
+                                        }
+
+                                        WaitEnterBePressed();
+                                        break;
+                                    default:
+                                        break;
                                 }
-
-                                WaitEnterBePressed();
-
+   
                                 break;
                             // Alterar cliente
                             case 3:
+
+                                AlterarUsuario();
 
                                 break;
                             // Deletar cliente
@@ -139,20 +202,19 @@ namespace SoftwareControleClientes
 
                                 break;
                             default:
-
                                 Console.WriteLine("Por favor, digite um valor válido!");
                                 WaitEnterBePressed();
-
                                 break;
                         }
                     }
-                } while (opcao != -1);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"\n  *** Erro encontrado *** \n  Tipo: {e.GetType()}. \n  Mensagem: {e.Message}");
+                    WaitEnterBePressed();
+                }
+            } while (opcao != -1);
             }
-            catch (Exception e)
-            {
-                Console.WriteLine($"\n  *** Erro encontrado *** \n  Tipo: {e.GetType()}. \n  Mensagem: {e.Message}");
-            }
+            
         }
     }
-
-}

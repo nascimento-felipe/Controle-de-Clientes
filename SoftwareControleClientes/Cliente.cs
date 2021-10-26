@@ -8,33 +8,28 @@ namespace SoftwareControleClientes
     [BsonIgnoreExtraElements]
     public sealed class Cliente
     {
-        private ObjectId codigo;
+        private int codigo;
         private String nome;
         private int idade;
         private StringBuilder senha = new StringBuilder();
+        private string data;
 
-        public Cliente()
-        {
-            this.codigo = ObjectId.GenerateNewId();
-        }
-
-        public ObjectId Codigo { get => codigo; set => codigo = value; }
+        public int Codigo { get => codigo; set => codigo = value; }
         public int Idade { get => idade; set => idade = value; }
         public string Nome { get => nome; set => nome = value; }
         public StringBuilder Senha { get => senha; set => senha = value; }
+        public string Data { get => data; set => data = value; }
 
-        public void CadastrarCliente()
+        public void CadastrarCliente(int cod)
         {
-            Console.WriteLine("  Seja bem vindo!\n"
-                + "    Digite o seu nome: ");
-            nome = Console.ReadLine().Trim();
-            Console.Clear();
+            Console.Write("  Seja bem vindo!\n"
+                            + "    Digite o seu nome: ");
+            Nome = Console.ReadLine().Trim();
 
-            Console.WriteLine("    Digite sua idade:");
+            Console.Write("    Digite sua idade: ");
             Idade = (int.Parse(Console.ReadLine()));
-            Console.Clear();
 
-            Console.WriteLine("    Digite uma senha bem segura: ");
+            Console.Write("    Digite uma senha bem segura: ");
 
             while (true)
             {
@@ -51,16 +46,19 @@ namespace SoftwareControleClientes
                 else if (key.Key != ConsoleKey.Backspace) senha.Append(key.KeyChar);
             }
 
+            string diaMes;
+            Console.Write("\n    Digite a data da venda (DD/MM): ");
+            diaMes = Console.ReadLine();
+
+            if (diaMes == null || diaMes == "")
+                diaMes = $"{DateTime.Today.Day}/{DateTime.Today.Month}";
+
+            Data = $"{diaMes}/{DateTime.Now.Year}";
+
             Console.Clear();
+
+            Codigo = cod;
         }
 
-        public void AlterarCliente()
-        {
-            Console.Write("Digite o novo nome: ");
-            nome = Console.ReadLine();
-
-            Console.Write("Digite a nova idade: ");
-            Idade = Int32.Parse(Console.ReadLine());
-        }
     }
 }
