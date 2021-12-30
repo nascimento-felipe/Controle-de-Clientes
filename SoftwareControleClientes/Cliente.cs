@@ -8,19 +8,19 @@ namespace SoftwareControleClientes
     [BsonIgnoreExtraElements]
     public sealed class Cliente
     {
-        private int codigo;
+        private long id;
         private String nome;
         private int idade;
         private StringBuilder senha = new StringBuilder();
         private string data;
 
-        public int Codigo { get => codigo; set => codigo = value; }
+        public long Id { get => id; set => id = value; }
         public int Idade { get => idade; set => idade = value; }
         public string Nome { get => nome; set => nome = value; }
         public StringBuilder Senha { get => senha; set => senha = value; }
         public string Data { get => data; set => data = value; }
 
-        public void CadastrarCliente(int cod)
+        public void CadastrarCliente(long cod)
         {
             Console.Write("  Seja bem vindo!\n"
                             + "    Digite o seu nome: ");
@@ -57,7 +57,7 @@ namespace SoftwareControleClientes
 
             Console.Clear();
 
-            Codigo = cod;
+            Id = cod;
         }
 
     }
